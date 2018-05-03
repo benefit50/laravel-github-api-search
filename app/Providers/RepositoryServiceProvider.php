@@ -39,6 +39,9 @@ class RepositoryServiceProvider extends ServiceProvider
             return new Github($cachePool);
         });
 
+        /**
+         * Cache pool will be optionally used to stash the responses locally.
+         */
         $this->app->singleton(CacheItemPoolInterface::class, function ($app) {
             $repository = $app->make(Repository::class);
 
