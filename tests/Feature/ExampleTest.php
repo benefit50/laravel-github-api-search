@@ -2,20 +2,33 @@
 
 namespace Tests\Feature;
 
+use App\Contracts\RepositoryContract;
 use Tests\TestCase;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 
 class ExampleTest extends TestCase
 {
-    /**
-     * A basic test example.
-     *
-     * @return void
-     */
-    public function testBasicTest()
+    public function testMainPage()
     {
         $response = $this->get('/');
 
-        $response->assertStatus(200);
+        $response->assertSeeText('Laravel');
+    }
+
+    public function testSearch()
+    {
+        $response = $this->json('GET', '/search', ['query' => '@octocat git-consortium']);
+
+        $result = new \stdClass();
+        $result->file = 'README.md';
+        $result->owner = 'octocat';
+        $result->repository = 'octocat/git-consortium';
+
+        $expectedFragment = [$result];
+
+        $response->assertStatus(200)
+            ->assertHeader('Content-Type', 'application/json')
+            ->assertJsonCount(1)
+            ->assertJsonFragment($expectedFragment);
     }
 }
