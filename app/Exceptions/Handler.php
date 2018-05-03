@@ -3,6 +3,7 @@
 namespace App\Exceptions;
 
 use Exception;
+use Github\Exception\ExceptionInterface;
 use Illuminate\Foundation\Exceptions\Handler as ExceptionHandler;
 
 class Handler extends ExceptionHandler
@@ -48,6 +49,13 @@ class Handler extends ExceptionHandler
      */
     public function render($request, Exception $exception)
     {
+        /**
+         * Handling the errors thrown by knplabs/github-api
+         */
+        if ($exception instanceof ExceptionInterface) {
+            return response()->json($exception->getMessage())->setStatusCode(400);
+        }
+
         return parent::render($request, $exception);
     }
 }
